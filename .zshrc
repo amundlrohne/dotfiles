@@ -120,5 +120,5 @@ alias config='/usr/bin/git --git-dir=/home/rohneal/.dotfiles/ --work-tree=/home/
 alias vim=nvim
 
 
-# Z - Jump Around 
-. .config/z.sh
+# Z - Jump Around
+. ~/.config/z.sh

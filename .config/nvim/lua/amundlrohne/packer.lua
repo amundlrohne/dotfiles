@@ -11,14 +11,19 @@ return require("packer").startup(function(use)
 		tag = "0.1.2",
 		requires = { { "nvim-lua/plenary.nvim" } },
 	})
-	use("Mofiqul/dracula.nvim")
+	use({ "catppuccin/nvim", as = "catppuccin" })
 	use("nvim-tree/nvim-web-devicons")
 	use("nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" })
 	use("mbbill/undotree")
 	use("tpope/vim-fugitive")
 	use({
-		"nvim-lualine/lualine.nvim",
-		requires = { "nvim-tree/nvim-web-devicons", opt = true },
+		"feline-nvim/feline.nvim",
+		after = "catppuccin",
+		config = function()
+			require("feline").setup({
+				components = require("catppuccin.groups.integrations.feline").get(),
+			})
+		end,
 	})
 	use({
 		"VonHeikemen/lsp-zero.nvim",
