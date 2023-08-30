@@ -122,3 +122,8 @@ alias vim=nvim
 
 # Z - Jump Around
 . ~/.config/z.sh
+
+# TMUX Startup
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    tmux attach -t default || tmux new -s default
+fi
