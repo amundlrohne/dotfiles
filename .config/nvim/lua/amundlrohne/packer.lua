@@ -60,4 +60,10 @@ return require("packer").startup(function(use)
 		end,
 	})
 	use("christoomey/vim-tmux-navigator")
+    use({
+        "stevearc/oil.nvim",
+        config = function()
+            require("oil").setup()
+        end,
+    })
 end)
