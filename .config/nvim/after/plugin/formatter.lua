@@ -23,7 +23,7 @@ require("formatter").setup({
 			require("formatter.filetypes.typescriptreact").prettier,
 		},
 		go = {
-			require("formatter.filetypes.go"),
+                require("formatter.filetypes.go"),
 		},
 		-- Use the special "*" filetype for defining formatter configurations on
 		-- any filetype

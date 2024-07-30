@@ -66,4 +66,15 @@ return require("packer").startup(function(use)
             require("oil").setup()
         end,
     })
+    use({
+      "tpope/vim-dadbod",
+      requires = {
+       "kristijanhusak/vim-dadbod-ui",
+       "kristijanhusak/vim-dadbod-completion"
+      },
+      config = function()
+        vim.g.db_ui_save_location = "~/.config/nvim/db_ui"
+        vim.g.db_ui_use_nerd_fonts = 1
+      end,
+})
 end)
