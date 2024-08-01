@@ -40,7 +40,8 @@ return require("packer").startup(function(use)
 			{ "L3MON4D3/LuaSnip" }, -- Required
 		},
 	})
-	use("mhartington/formatter.nvim")
+	--use("mhartington/formatter.nvim")
+	use("stevearc/conform.nvim")
 	use("ThePrimeagen/harpoon")
 	use({ "folke/trouble.nvim", requires = { "nvim-tree/nvim-web-devicons" } })
 	use("lewis6991/gitsigns.nvim")
@@ -60,21 +61,27 @@ return require("packer").startup(function(use)
 		end,
 	})
 	use("christoomey/vim-tmux-navigator")
-    use({
-        "stevearc/oil.nvim",
-        config = function()
-            require("oil").setup()
-        end,
-    })
-    use({
-      "tpope/vim-dadbod",
-      requires = {
-       "kristijanhusak/vim-dadbod-ui",
-       "kristijanhusak/vim-dadbod-completion"
-      },
-      config = function()
-        vim.g.db_ui_save_location = "~/.config/nvim/db_ui"
-        vim.g.db_ui_use_nerd_fonts = 1
-      end,
-})
+	use({
+		"stevearc/oil.nvim",
+		config = function()
+			require("oil").setup()
+		end,
+	})
+	use({
+		"tpope/vim-dadbod",
+		requires = {
+			"kristijanhusak/vim-dadbod-ui",
+			"kristijanhusak/vim-dadbod-completion",
+		},
+		config = function()
+			vim.g.db_ui_save_location = "~/.config/nvim/db_ui"
+			vim.g.db_ui_use_nerd_fonts = 1
+		end,
+	})
+	use({
+		"GCBallesteros/jupytext.nvim",
+		config = function()
+			require("jupytext").setup()
+		end,
+	})
 end)
