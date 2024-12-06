@@ -78,10 +78,18 @@ return require("packer").startup(function(use)
 			vim.g.db_ui_use_nerd_fonts = 1
 		end,
 	})
+	use("towolf/vim-helm")
 	use({
-		"GCBallesteros/jupytext.nvim",
+		"akinsho/git-conflict.nvim",
+		tag = "*",
 		config = function()
-			require("jupytext").setup()
+			require("git-conflict").setup()
+		end,
+	})
+	use({
+		"stevearc/quicker.nvim",
+		config = function()
+			require("quicker").setup()
 		end,
 	})
 end)

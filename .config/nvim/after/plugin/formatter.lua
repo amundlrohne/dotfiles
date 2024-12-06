@@ -8,6 +8,7 @@ require("conform").setup({
 		javascript = { "prettierd", "prettier", stop_after_first = true },
 		json = { "jq" },
 		terraform = { "terraform_fmt" },
+		yaml = { "yamlfmt" },
 	},
 	format_on_save = {
 		timeout_ms = 500,
