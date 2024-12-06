@@ -8,7 +8,7 @@ return require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
 	use({
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.2",
+		tag = "0.1.8",
 		requires = { { "nvim-lua/plenary.nvim" } },
 	})
 	use({ "catppuccin/nvim", as = "catppuccin" })
@@ -40,7 +40,6 @@ return require("packer").startup(function(use)
 			{ "L3MON4D3/LuaSnip" }, -- Required
 		},
 	})
-	--use("mhartington/formatter.nvim")
 	use("stevearc/conform.nvim")
 	use("ThePrimeagen/harpoon")
 	use({ "folke/trouble.nvim", requires = { "nvim-tree/nvim-web-devicons" } })
@@ -80,16 +79,16 @@ return require("packer").startup(function(use)
 	})
 	use("towolf/vim-helm")
 	use({
+		"stevearc/quicker.nvim",
+		config = function()
+			require("quicker").setup()
+		end,
+    })
+	use({
 		"akinsho/git-conflict.nvim",
 		tag = "*",
 		config = function()
 			require("git-conflict").setup()
-		end,
-	})
-	use({
-		"stevearc/quicker.nvim",
-		config = function()
-			require("quicker").setup()
 		end,
 	})
 end)
