@@ -6,6 +6,7 @@ require("conform").setup({
 		python = { "isort", "black" },
 		-- Conform will run the first available formatter
 		javascript = { "prettierd", "prettier", stop_after_first = true },
+		typescript = { "prettierd", "prettier", stop_after_first = true },
 		json = { "jq" },
 		terraform = { "terraform_fmt" },
 		yaml = { "yamlfmt" },
