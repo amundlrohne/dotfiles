@@ -83,7 +83,7 @@ return require("packer").startup(function(use)
 		config = function()
 			require("quicker").setup()
 		end,
-    })
+	})
 	use({
 		"akinsho/git-conflict.nvim",
 		tag = "*",
