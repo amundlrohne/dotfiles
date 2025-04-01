@@ -44,7 +44,7 @@ vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
-vim.o.winborder = "single"
+--vim.o.winborder = "single"
 
 vim.opt.scrolloff = 8
 

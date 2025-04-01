@@ -43,7 +43,6 @@ return {
 		-- Autocompletion
 		{ "hrsh7th/nvim-cmp" }, -- Required
 		{ "hrsh7th/cmp-nvim-lsp" }, -- Required
-		{ "L3MON4D3/LuaSnip" }, -- Required
 	},
 	config = function()
 		local lspconfig_defaults = require("lspconfig").util.default_config
@@ -103,16 +102,7 @@ return {
 					vim.snippet.expand(args.body)
 				end,
 			},
-			mapping = {
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
-			},
+			mapping = cmp.mapping.preset.insert({ ["<CR>"] = cmp.mapping.confirm({ select = false }) }),
 		})
-		--		local cmp = require("cmp")
-		--
-		--		cmp.setup({
-		--			mapping = {
-		--				["<CR>"] = cmp.mapping.confirm({ select = false }),
-		--			},
-		--		})
 	end,
 }

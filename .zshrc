@@ -127,3 +127,6 @@ alias vim=nvim
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
     tmux attach -t default || tmux new -s default
 fi
+
+export PATH=~/.local/bin/:$PATH # put ~/.local/bin in the path in your .basrc or .zshrc
+
