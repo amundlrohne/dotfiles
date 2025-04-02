@@ -11,6 +11,7 @@ return {
 			gitsigns = true,
 			treesitter = true,
 			harpoon = true,
+			dadbod_ui = false,
 			mason = true,
 			lsp_trouble = true,
 			telescope = {
