@@ -2,7 +2,7 @@ return {
 	"feline-nvim/feline.nvim",
 	dependecies = { { "catppuccin" } },
 	config = function()
-		local ctp_feline = require("catppuccin.groups.integrations.feline")
+		local ctp_feline = require("catppuccin.special.feline")
 
 		ctp_feline.setup()
 
