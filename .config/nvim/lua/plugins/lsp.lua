@@ -1,106 +1,130 @@
---return {
---	"williamboman/mason.nvim",
---	dependencies = {
---		{ "williamboman/mason-lspconfig.nvim" },
---		{ "neovim/nvim-lspconfig" },
---	},
---	config = function()
---		require("mason").setup()
---		require("mason-lspconfig").setup()
---
---		require("mason-lspconfig").setup_handlers({
---			-- The first entry (without a key) will be the default handler
---			-- and will be called for each installed server that doesn't have
---			-- a dedicated handler.
---			function(server_name) -- default handler (optional)
---				require("lspconfig")[server_name].setup({})
---			end,
---			-- Next, you can provide a dedicated handler for specific servers.
---			-- For example, a handler override for the `rust_analyzer`:
---			["rust_analyzer"] = function()
---				require("rust-tools").setup({})
---			end,
---		})
---
---		vim.api.nvim_create_autocmd("LspAttach", {
---			callback = function(ev)
---				local client = vim.lsp.get_client_by_id(ev.data.client_id)
---				if client:supports_method("textDocument/completion") then
---					vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = false })
---				end
---			end,
---		})
---	end,
---}
 return {
-	"VonHeikemen/lsp-zero.nvim",
-	version = "v4.x",
+	"neovim/nvim-lspconfig",
 	dependencies = {
-		{ "neovim/nvim-lspconfig" }, -- Required
-		{ "williamboman/mason.nvim" }, -- Optional
-		{ "williamboman/mason-lspconfig.nvim" }, -- Optional
-
-		-- Autocompletion
-		{ "hrsh7th/nvim-cmp" }, -- Required
-		{ "hrsh7th/cmp-nvim-lsp" }, -- Required
+		"williamboman/mason.nvim",
+		"williamboman/mason-lspconfig.nvim",
+		"hrsh7th/cmp-nvim-lsp",
+		"hrsh7th/nvim-cmp",
 	},
 	config = function()
-		local lspconfig_defaults = require("lspconfig").util.default_config
-		lspconfig_defaults.capabilities = vim.tbl_deep_extend(
-			"force",
-			lspconfig_defaults.capabilities,
-			require("cmp_nvim_lsp").default_capabilities()
-		)
+		-- 1. Setup Capabilities
+		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-		local lspconfig = require("lspconfig")
+		-- 2. Setup Mason & Mason-LSPConfig
+		require("mason").setup()
+		require("mason-lspconfig").setup({
+			-- Auto-install these servers
+			ensure_installed = {
+				"clangd", -- C / C++
+				"helm_ls", -- Helm
+				"gopls", -- Go
+				"ts_ls", -- JS / TS (formerly tsserver)
+				"html", -- HTML
+				"cssls", -- CSS
+				"tailwindcss", -- Tailwind CSS
+			},
 
-		lspconfig.helm_ls.setup({
-			settings = {
-				["helm-ls"] = {
-					yamlls = {
-						path = "yaml-language-server",
-					},
-				},
+			handlers = {
+				-- Default handler: Setup standard servers (html, cssls, ts_ls)
+				-- with default settings.
+				function(server_name)
+					require("lspconfig")[server_name].setup({
+						capabilities = capabilities,
+					})
+				end,
+
+				-- Custom Handler: Helm
+				["helm_ls"] = function()
+					require("lspconfig").helm_ls.setup({
+						capabilities = capabilities,
+						settings = {
+							["helm-ls"] = {
+								yamlls = { path = "yaml-language-server" },
+							},
+						},
+					})
+				end,
+
+				-- Custom Handler: Clangd (C/C++)
+				["clangd"] = function()
+					require("lspconfig").clangd.setup({
+						capabilities = capabilities,
+						cmd = {
+							"clangd",
+							"--background-index",
+							"--clang-tidy",
+							"--header-insertion=iwyu",
+							"--completion-style=detailed",
+							"--function-arg-placeholders",
+							"--fallback-style=llvm",
+						},
+						init_options = {
+							usePlaceholders = true,
+							completeUnimported = true,
+							clangdFileStatus = true,
+						},
+					})
+				end,
+
+				-- Custom Handler: Gopls (Go)
+				["gopls"] = function()
+					require("lspconfig").gopls.setup({
+						capabilities = capabilities,
+						settings = {
+							gopls = {
+								-- Enable "staticcheck" for better linting
+								staticcheck = true,
+								-- Add import to unimported packages automatically
+								completeUnimported = true,
+								-- Show placeholders for function parameters
+								usePlaceholders = true,
+								analyses = {
+									unusedparams = true,
+								},
+							},
+						},
+					})
+				end,
 			},
 		})
 
-		-- This is where you enable features that only work
-		-- if there is a language server active in the file
+		-- 3. Keymaps & Autocmds
 		vim.api.nvim_create_autocmd("LspAttach", {
 			desc = "LSP actions",
 			callback = function(event)
 				local opts = { buffer = event.buf }
 
-				vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-				vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-				vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-				vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-				vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-				vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-				vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-				vim.keymap.set("n", "<leader>vrn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-				vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-				vim.keymap.set("n", "<leader>vca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+				vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+				vim.keymap.set("n", "go", vim.lsp.buf.type_definition, opts)
+				vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+				vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
+				vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
+				-- This F3 format command works great for Go (gofmt) and C (clang-format)
+				vim.keymap.set({ "n", "x" }, "<F3>", function()
+					vim.lsp.buf.format({ async = true })
+				end, opts)
+				vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
 			end,
 		})
 
-		require("mason").setup()
-		require("mason-lspconfig").setup()
-
-		-- Make sure you setup `cmp` after lsp-zero
+		-- 4. Autocompletion
 		local cmp = require("cmp")
-
 		cmp.setup({
 			sources = {
 				{ name = "nvim_lsp" },
 			},
 			snippet = {
 				expand = function(args)
-					-- You need Neovim v0.10 to use vim.snippet
 					vim.snippet.expand(args.body)
 				end,
 			},
-			mapping = cmp.mapping.preset.insert({ ["<CR>"] = cmp.mapping.confirm({ select = false }) }),
+			mapping = cmp.mapping.preset.insert({
+				["<CR>"] = cmp.mapping.confirm({ select = false }),
+				["<C-Space>"] = cmp.mapping.complete(),
+			}),
 		})
 	end,
 }
