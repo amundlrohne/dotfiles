@@ -7,10 +7,9 @@ return {
 		"hrsh7th/nvim-cmp",
 	},
 	config = function()
-		-- 1. Setup Capabilities
+		local border_style = "single"
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-		-- 2. Setup Mason & Mason-LSPConfig
 		require("mason").setup()
 		require("mason-lspconfig").setup({
 			-- Auto-install these servers
@@ -88,25 +87,29 @@ return {
 			},
 		})
 
-		-- 3. Keymaps & Autocmds
+		-- Keymaps & Autocmds
 		vim.api.nvim_create_autocmd("LspAttach", {
 			desc = "LSP actions",
 			callback = function(event)
 				local opts = { buffer = event.buf }
 
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+				vim.keymap.set("n", "K", function()
+					vim.lsp.buf.hover({ border = border_style })
+				end, opts)
 				vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
 				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
 				vim.keymap.set("n", "go", vim.lsp.buf.type_definition, opts)
 				vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-				vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
+				vim.keymap.set("n", "gs", function()
+					vim.lsp.buf.signature_help({ border = border_style })
+				end, opts)
 				vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
 				vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
 			end,
 		})
 
-		-- 4. Autocompletion
+		-- Autocompletion
 		local cmp = require("cmp")
 		cmp.setup({
 			sources = {
@@ -121,6 +124,16 @@ return {
 				["<CR>"] = cmp.mapping.confirm({ select = false }),
 				["<C-Space>"] = cmp.mapping.complete(),
 			}),
+			window = {
+				completion = cmp.config.window.bordered({
+					border = "single",
+					winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+				}),
+				documentation = cmp.config.window.bordered({
+					border = "single",
+					winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+				}),
+			},
 		})
 	end,
 }
