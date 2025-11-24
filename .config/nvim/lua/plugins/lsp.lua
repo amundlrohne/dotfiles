@@ -3,12 +3,10 @@ return {
 	dependencies = {
 		"williamboman/mason.nvim",
 		"williamboman/mason-lspconfig.nvim",
-		"hrsh7th/cmp-nvim-lsp",
-		"hrsh7th/nvim-cmp",
 	},
 	config = function()
 		local border_style = "single"
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 		require("mason").setup()
 		require("mason-lspconfig").setup({
@@ -107,33 +105,6 @@ return {
 				vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
 				vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
 			end,
-		})
-
-		-- Autocompletion
-		local cmp = require("cmp")
-		cmp.setup({
-			sources = {
-				{ name = "nvim_lsp" },
-			},
-			snippet = {
-				expand = function(args)
-					vim.snippet.expand(args.body)
-				end,
-			},
-			mapping = cmp.mapping.preset.insert({
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
-				["<C-Space>"] = cmp.mapping.complete(),
-			}),
-			window = {
-				completion = cmp.config.window.bordered({
-					border = "single",
-					winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
-				}),
-				documentation = cmp.config.window.bordered({
-					border = "single",
-					winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
-				}),
-			},
 		})
 	end,
 }

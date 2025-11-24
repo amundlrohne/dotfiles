@@ -4,7 +4,7 @@ return {
 	priority = 1000,
 	opts = {
 		integrations = {
-			cmp = true,
+			blink = true,
 			gitsigns = true,
 			treesitter = true,
 			harpoon = true,
