@@ -102,10 +102,6 @@ return {
 				vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 				vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
 				vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
-				-- This F3 format command works great for Go (gofmt) and C (clang-format)
-				vim.keymap.set({ "n", "x" }, "<F3>", function()
-					vim.lsp.buf.format({ async = true })
-				end, opts)
 				vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
 			end,
 		})

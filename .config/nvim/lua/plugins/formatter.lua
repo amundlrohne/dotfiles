@@ -4,8 +4,7 @@ return {
 	cmd = { "ConformInfo" },
 	keys = {
 		{
-			-- Customize or remove this keymap to your liking
-			"<F3>",
+			"<leader>ft",
 			function()
 				require("conform").format({ async = true, lsp_format = "fallback" })
 			end,
@@ -15,10 +14,10 @@ return {
 	},
 	opts = {
 		formatters_by_ft = {
-			-- C: The star of the show. Requires clang-format (install via Mason)
+			-- C:
 			c = { "clang-format" },
 
-			-- Go: "goimports" fixes imports, "gofumpt" is a stricter, better gofmt
+			-- Go:
 			go = { "goimports", "gofumpt" },
 
 			-- Lua
@@ -27,7 +26,7 @@ return {
 			-- Python
 			python = { "isort", "black" },
 
-			-- Web Stack (Prettier is usually enough for all of these)
+			-- Web Stack
 			javascript = { "prettierd", "prettier", stop_after_first = true },
 			typescript = { "prettierd", "prettier", stop_after_first = true },
 			typescriptreact = { "prettierd", "prettier", stop_after_first = true },
