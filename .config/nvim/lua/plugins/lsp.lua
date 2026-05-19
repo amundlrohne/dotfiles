@@ -1,92 +1,75 @@
 return {
 	"neovim/nvim-lspconfig",
 	dependencies = {
-		"williamboman/mason.nvim",
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason.nvim",
+		"mason-org/mason-lspconfig.nvim",
 	},
 	config = function()
 		local border_style = "single"
 		local capabilities = require("blink.cmp").get_lsp_capabilities()
+		local servers = {
+			"clangd",
+			"helm_ls",
+			"gopls",
+			"ts_ls",
+			"html",
+			"cssls",
+			"tailwindcss",
+			"zls",
+		}
 
-		require("mason").setup()
-		require("mason-lspconfig").setup({
-			-- Auto-install these servers
-			ensure_installed = {
-				"clangd", -- C / C++
-				"helm_ls", -- Helm
-				"gopls", -- Go
-				"ts_ls", -- JS / TS (formerly tsserver)
-				"html", -- HTML
-				"cssls", -- CSS
-				"tailwindcss", -- Tailwind CSS
-			},
+		vim.lsp.config("*", {
+			capabilities = capabilities,
+		})
 
-			handlers = {
-				-- Default handler: Setup standard servers (html, cssls, ts_ls)
-				-- with default settings.
-				function(server_name)
-					require("lspconfig")[server_name].setup({
-						capabilities = capabilities,
-					})
-				end,
-
-				-- Custom Handler: Helm
-				["helm_ls"] = function()
-					require("lspconfig").helm_ls.setup({
-						capabilities = capabilities,
-						settings = {
-							["helm-ls"] = {
-								yamlls = { path = "yaml-language-server" },
-							},
-						},
-					})
-				end,
-
-				-- Custom Handler: Clangd (C/C++)
-				["clangd"] = function()
-					require("lspconfig").clangd.setup({
-						capabilities = capabilities,
-						cmd = {
-							"clangd",
-							"--background-index",
-							"--clang-tidy",
-							"--header-insertion=iwyu",
-							"--completion-style=detailed",
-							"--function-arg-placeholders",
-							"--fallback-style=llvm",
-						},
-						init_options = {
-							usePlaceholders = true,
-							completeUnimported = true,
-							clangdFileStatus = true,
-						},
-					})
-				end,
-
-				-- Custom Handler: Gopls (Go)
-				["gopls"] = function()
-					require("lspconfig").gopls.setup({
-						capabilities = capabilities,
-						settings = {
-							gopls = {
-								-- Enable "staticcheck" for better linting
-								staticcheck = true,
-								-- Add import to unimported packages automatically
-								completeUnimported = true,
-								-- Show placeholders for function parameters
-								usePlaceholders = true,
-								analyses = {
-									unusedparams = true,
-								},
-							},
-						},
-					})
-				end,
+		vim.lsp.config("helm_ls", {
+			settings = {
+				["helm-ls"] = {
+					yamlls = { path = "yaml-language-server" },
+				},
 			},
 		})
 
-		-- Keymaps & Autocmds
+		vim.lsp.config("clangd", {
+			cmd = {
+				"clangd",
+				"--background-index",
+				"--clang-tidy",
+				"--header-insertion=iwyu",
+				"--completion-style=detailed",
+				"--function-arg-placeholders",
+				"--fallback-style=llvm",
+			},
+			init_options = {
+				usePlaceholders = true,
+				completeUnimported = true,
+				clangdFileStatus = true,
+			},
+		})
+
+		vim.lsp.config("gopls", {
+			settings = {
+				gopls = {
+					staticcheck = true,
+					completeUnimported = true,
+					usePlaceholders = true,
+					analyses = {
+						unusedparams = true,
+					},
+				},
+			},
+		})
+
+		require("mason").setup()
+		require("mason-lspconfig").setup({
+			ensure_installed = servers,
+			automatic_enable = false,
+		})
+		vim.lsp.enable(servers)
+
+		local group = vim.api.nvim_create_augroup("lsp-attach", { clear = true })
 		vim.api.nvim_create_autocmd("LspAttach", {
+			group = group,
 			desc = "LSP actions",
 			callback = function(event)
 				local opts = { buffer = event.buf }

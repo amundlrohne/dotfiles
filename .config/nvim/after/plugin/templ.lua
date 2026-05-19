@@ -13,7 +13,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 		vim.notify("Generating templ files...", vim.log.levels.INFO, { title = "Templ" })
 
 		-- Execute the command. We use vim.fn.system to capture the output.
-		local output = vim.fn.system("templ generate")
+		local output = vim.fn.system("templ generate -f " .. vim.fn.expand("%:p"))
 
 		-- Check if the command failed. vim.v.shell_error is non-zero on failure.
 		if vim.v.shell_error ~= 0 then

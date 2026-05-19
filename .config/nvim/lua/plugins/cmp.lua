@@ -1,7 +1,7 @@
 return {
 	"saghen/blink.cmp",
+	branch = "v1",
 	dependencies = "rafamadriz/friendly-snippets", -- Optional: for standard snippets
-	version = "*", -- Use the latest release
 
 	opts = {
 		keymap = { preset = "enter" },

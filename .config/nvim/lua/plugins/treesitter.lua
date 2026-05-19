@@ -1,31 +1,83 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
+	branch = "main",
+	lazy = false,
 	build = ":TSUpdate",
 	config = function()
-		local configs = require("nvim-treesitter.configs")
-		configs.setup({
-			-- A list of parser names, or "all" (the five listed parsers should always be installed)
-			ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "rust", "javascript", "typescript", "go" },
+		local parsers = {
+			"c",
+			"cpp",
+			"go",
+			"gomod",
+			"gosum",
+			"gowork",
+			"javascript",
+			"lua",
+			"markdown",
+			"markdown_inline",
+			"query",
+			"rust",
+			"templ",
+			"tsx",
+			"typescript",
+			"vim",
+			"vimdoc",
+			"zig",
+		}
 
-			-- Install parsers synchronously (only applied to `ensure_installed`)
-			sync_install = false,
+		local ok, treesitter = pcall(require, "nvim-treesitter")
+		if ok and treesitter.setup and treesitter.install then
+			treesitter.setup({
+				install_dir = vim.fn.stdpath("data") .. "/site",
+			})
 
-			-- Automatically install missing parsers when entering buffer
-			-- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-			auto_install = true,
+			local installed = treesitter.get_installed("parsers")
+			local missing = vim.tbl_filter(function(parser)
+				return not vim.tbl_contains(installed, parser)
+			end, parsers)
 
-			---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-			-- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+			if #missing > 0 then
+				treesitter.install(missing)
+			end
+		else
+			local configs = require("nvim-treesitter.configs")
+			configs.setup({
+				ensure_installed = parsers,
+				sync_install = false,
+				auto_install = true,
+				highlight = {
+					enable = true,
+					additional_vim_regex_highlighting = false,
+				},
+			})
+		end
 
-			highlight = {
-				enable = true,
-
-				-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-				-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-				-- Using this option may slow down your editor, and you may see some duplicate highlights.
-				-- Instead of true it can also be a list of languages
-				additional_vim_regex_highlighting = false,
+		local group = vim.api.nvim_create_augroup("treesitter-highlight", { clear = true })
+		vim.api.nvim_create_autocmd("FileType", {
+			group = group,
+			pattern = {
+				"c",
+				"cpp",
+				"go",
+				"gomod",
+				"gosum",
+				"gowork",
+				"help",
+				"javascript",
+				"javascriptreact",
+				"lua",
+				"markdown",
+				"query",
+				"rust",
+				"templ",
+				"typescript",
+				"typescriptreact",
+				"vim",
+				"zig",
 			},
+			callback = function(args)
+				pcall(vim.treesitter.start, args.buf)
+			end,
 		})
 	end,
 }
